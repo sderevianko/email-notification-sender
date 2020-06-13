@@ -26,6 +26,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Comparator;
 import java.util.Properties;
 
 public class Sender {
@@ -46,7 +48,7 @@ public class Sender {
         session = Session.getInstance(prop, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("seregaserver322@gmail.com", "qwertyuiop[]37");
+                return new PasswordAuthentication("seregaserver322@gmail.com", "asdfghjkl;'11");
             }
         });
     }
@@ -73,9 +75,17 @@ public class Sender {
 
         MimeBodyPart attachmentBodyPart = new MimeBodyPart();
 
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
-        attachmentBodyPart.attachFile(new File(classLoader.getResource("/main/resources/image/im.jpg").getFile()));
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        attachmentBodyPart.attachFile(new File(classLoader.getResource("image/im.jpg").getFile()));
+
+        /*MimeBodyPart messageBodyPart = new MimeBodyPart();
+        messageBodyPart = new MimeBodyPart();
+        String filename = "image/im.jpg";
+        DataSource source = new FileDataSource(filename);
+        messageBodyPart.setDataHandler(new DataHandler(source));
+        messageBodyPart.setFileName(filename);
+        multipart.addBodyPart(messageBodyPart);*/
 
         multipart.addBodyPart(attachmentBodyPart);
         message.setContent(multipart);

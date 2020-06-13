@@ -6,6 +6,8 @@ import sender.Sender;
 import javax.mail.MessagingException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Main {
@@ -17,5 +19,6 @@ public class Main {
         sender.addText();
         sender.addImage();
         sender.sendEmail();
+
     }
 }
