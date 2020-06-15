@@ -2,11 +2,7 @@ package sender;
 
 import org.xml.sax.SAXException;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
-import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -17,17 +13,9 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.swing.*;
-import javax.swing.text.Document;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Comparator;
 import java.util.Properties;
 
 public class Sender {
@@ -36,66 +24,53 @@ public class Sender {
     private Message message;
     private Session session;
     private Multipart multipart;
+    private MimeBodyPart attachmentBodyPartImage;
+    private MimeBodyPart attachmentBodyPartHtml;
 
-    public void addPropertiesOfEmailService() {
+    public void addPropertiesOfEmailService() throws MessagingException {
         prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
         prop.put("mail.smtp.port", "465");
-        //prop.put("mail.smtp.port", "587");
         prop.put("mail.smtp.ssl.enable", "true");
         prop.put("mail.smtp.auth", "true");
 
         session = Session.getInstance(prop, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("seregaserver322@gmail.com", "asdfghjkl;'11");
+                return new PasswordAuthentication("seregaserver322@gmail.com", "*****");
             }
         });
-    }
-
-    public void addText() throws MessagingException {
         message = new MimeMessage(session);
         message.setFrom(new InternetAddress("seregaserver322@gmail.com"));
         message.setRecipients(
             Message.RecipientType.TO, InternetAddress.parse("serya42572@gmail.com"));
-        message.setSubject("Mail Subject");
+        multipart = new MimeMultipart();
+    }
 
-        String msg = "This is my 7 email using JavaMailer";
-
+    public void addText() throws MessagingException {
+        message.setSubject("Picture");
+        String msg = "This is my last email using JavaMailer";
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
         mimeBodyPart.setContent(msg, "text/html");
-
-        multipart = new MimeMultipart();
         multipart.addBodyPart(mimeBodyPart);
-
-        message.setContent(multipart);
     }
 
-    public void addImage() throws IOException, MessagingException, SAXException, ParserConfigurationException {
-
-        MimeBodyPart attachmentBodyPart = new MimeBodyPart();
-
-
+    public void addImage() throws IOException, MessagingException {
+        attachmentBodyPartImage = new MimeBodyPart();
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        attachmentBodyPart.attachFile(new File(classLoader.getResource("image/im.jpg").getFile()));
-
-        /*MimeBodyPart messageBodyPart = new MimeBodyPart();
-        messageBodyPart = new MimeBodyPart();
-        String filename = "image/im.jpg";
-        DataSource source = new FileDataSource(filename);
-        messageBodyPart.setDataHandler(new DataHandler(source));
-        messageBodyPart.setFileName(filename);
-        multipart.addBodyPart(messageBodyPart);*/
-
-        multipart.addBodyPart(attachmentBodyPart);
-        message.setContent(multipart);
-
+        attachmentBodyPartImage.attachFile(new File(classLoader.getResource("image/im.jpg").getFile()));
+        multipart.addBodyPart(attachmentBodyPartImage);
     }
+
+    public void sendHtmlFile() throws IOException, MessagingException {
+        attachmentBodyPartHtml = new MimeBodyPart();
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        attachmentBodyPartHtml.attachFile(new File(classLoader.getResource("templates/test.html").getFile()));
+        multipart.addBodyPart(attachmentBodyPartHtml);
+    }
+
     public void sendEmail() throws MessagingException {
+        message.setContent(multipart);
         Transport.send(message);
-    }
-
-    public void sendHtmlFile() {
-
     }
 }
